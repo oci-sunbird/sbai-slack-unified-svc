@@ -19,6 +19,7 @@ def get_bot_endpoint(contextName: str):
     else:
         activity_url = os.environ["ACTIVITY_API_BASE_URL"]
         url =  activity_url + '/v1/query'
+        print(url)
         # if CONVERSE_ENABLED:
         #    url = activity_url + '/v1/chat'
         return url
@@ -77,7 +78,7 @@ def update_home_tab(client, event, logger):
 def chat_ai(message, say):
     user = message['user']
     # uncomment the print for debug
-    # print(message)
+    print(message)
     question=message['text']
     message_id=message['client_msg_id']
     # say(f"Hi there, <@{user}>! I am now Please wait, crafting response. It might take upto a minute.")
