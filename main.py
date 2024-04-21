@@ -2,6 +2,7 @@ import os
 import json
 import redis
 import requests
+import re
 # for getting environment variables
 from dotenv import load_dotenv
 # from utils import *
@@ -166,6 +167,13 @@ def update_home_tab(client, event, logger):
             "text": {
               "type": "mrkdwn",
               "text": "Current Context: " + selected_context
+            }
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "Dynamic update of the language and context has NOT been implemented yet. If you changed the language or context, please navigate to the DM page and come back."
             }
           },
 
@@ -391,10 +399,51 @@ def bot_submission_or_cancellation(ack: Ack, body: dict, client):
       )
     pass
 
-# @app.action("select_context")
-# def action_handle(ack, body, logger):
-#   ack()
-#   logger.info(body)
+@app.event("app_mention")
+def handle_app_mention_events(body, logger, client, say, ack):
+    logger.info(body)
+    # ack first
+    ack()
+    event = body["event"]
+    thread_ts = event.get("thread_ts", None) or event["ts"]
+    # get who is asking the question
+    userid = event["user"]
+    message_id=event['client_msg_id']
+    # get the user context and language
+    user_context = get_user_context(userid)
+    user_language = get_user_langauge(userid)
+    # get localized user language
+    immediate_response = get_message(language=user_language, key="context_loading_msg")
+    say(text=immediate_response, thread_ts=thread_ts) 
+    # get the question in the event
+    question = re.sub('<.*?>', '', event["text"])
+    
+    # get the ai service endpoint for the user context    
+    url = get_bot_endpoint(user_context)
+    # create the request payload
+    reqBody: dict
+    reqBody = {
+        "input": {
+            "language": user_language,
+            "audienceType": user_context,
+            "text": question
+        },
+        "output": {
+            'format': 'text'
+        }
+    }
+    headers = {
+        "x-source": "slack",
+        "x-request-id": str(message_id),
+        "x-device-id": f"d{userid}",
+        "x-consumer-id": str(userid)
+    }
+    response = requests.post(url, data=json.dumps(reqBody), headers=headers)
+    response.raise_for_status()
+    data = response.json()
+    # uncomment the print to debug
+    print(data)
+    say(text=data['output']['text'], thread_ts=thread_ts)
 
 
 @app.message()
