@@ -5,16 +5,25 @@ That is, to enable slack as a channel for Sunbird AI Assistant.
 
 ## Versions: 
 
-### Current version: 0.0.2-beta
+### Current Version: 0.1.0-beta
+
+Changes:
+1. implement and enabled user to choose different context (bot)
+2. enhance language change, please see below
+3. when either bot or language has been changed, a welcome DM will send to user
+4. for both context and language, user can use either /commend or app home screen button to select context/language
+5. original file of main.py, that is slack-channel-svc.py has been removed in the repository
+
+### Previous version: 0.0.2-beta
 
 Changes:
 1. re-implemented the api with FastAPI, instead of using default bolt server
-2. implmented and enabled user to choose different language
+2. implemented and enabled user to choose different language
 3. as language is now availabe, REDIS is a MUST
 4. introduced a MANDATORY config value in env, i.e. SUPPORTED_LANGUAGES 
 5. the filename of api/main has been renamed to main.py 
 
-### Previous version(s): 0.0.1-beta
+### Previous version: 0.0.1-beta
 
 Initial MVP implementation, these are the assumption
 - on English is being enabled.
@@ -38,7 +47,7 @@ If you are fronting the service with API gateway, remember to create the corresp
 
 Here are the to-do list
 - implement choosing language (partially completed in 0.0.2-beta)
-- implement choosing the bot, aka context
+- implement choosing the bot, aka context (partially completed in 0.1.0-beta)
 - implement other functions, such as help, etc
 - create the Dockerfile to enable the service to run as container
 - create the Helm charts for deployment in K8S 
