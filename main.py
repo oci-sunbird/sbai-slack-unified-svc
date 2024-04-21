@@ -505,6 +505,9 @@ async def startup_event():
     load_dotenv()
     logger.info('startup_event : Engine created')
 
+@api.get("/health")
+async def health_check():
+  return "Slack Service is running"
 
 # Ready? Start your app!
 # if __name__ == "__main__":
