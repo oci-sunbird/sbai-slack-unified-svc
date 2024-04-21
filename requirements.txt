@@ -2,3 +2,6 @@ slack_bolt
 python-dotenv
 redis
 requests
+pydantic==1.10.13
+fastapi==0.100.0
+uvicorn[standard]==0.20.0
